@@ -18,7 +18,8 @@ export default class Signaler {
     signalListener?: (s: string) => any
 
     constructor() {
-        this.ws = new WebSocket('ws://localhost:9090/')
+        const wsUrl = `${location.protocol == 'http:' ? 'ws' : 'wss'}://${location.host}`
+        this.ws = new WebSocket(wsUrl)
         this.rolePromise = new Promise(r => {
             if(this.role) return r(this.role)
 
