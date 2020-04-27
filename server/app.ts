@@ -11,8 +11,11 @@ class WebRTCSignaler {
         console.log('starting at', port)
 
         this.wss.on('connection', (ws: WebSocket) => {
-            const cws = ws;
             const client = new Client(ws, !this.initiatorAssigned())
+
+            // only two people can join
+            if (this.clients.length > 1) client.close()
+
             this.clients.push(client)
 
             console.log('connection size =', this.clients.length)
@@ -96,6 +99,10 @@ class Client {
             this.ws.send(m)
         })
         this.queuedMessages = []
+    }
+
+    close() {
+        this.ws.close()
     }
 }
 
