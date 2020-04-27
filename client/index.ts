@@ -1,5 +1,5 @@
 import Peer from 'simple-peer';
-import Signaler, {Role} from './signaler'
+import Signaler from './signaler'
 
 const s = new Signaler()
 const video: HTMLVideoElement = document.getElementById('video') as HTMLVideoElement;
@@ -11,9 +11,9 @@ async function main() {
     console.log('got role', role)
 
     var peer = new Peer({
-        initiator: role == Role.initiator, 
+        initiator: role.initiator,
         stream: stream,
-        config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }] },
+        config: { iceServers: role.ice_servers },
     })
     peer.on('close', () => s.close())
 

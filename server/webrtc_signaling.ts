@@ -1,5 +1,11 @@
 import * as WebSocket from 'ws';
 import http from 'http';
+import twilio from 'twilio'
+import * as secrets from "../../secret.json"
+
+
+const twillioClient = twilio(secrets.twilio.acountSid, secrets.twilio.authToken);
+
 
 
 
@@ -68,12 +74,20 @@ class Client {
         this.ws = ws
     }
 
-    assignRole() {
+    async assignRole() {
         console.log('assignRole', this.roleAssigned, this.initiator)
         if (this.roleAssigned) return;
 
         this.roleAssigned = true;
-        this.ws.send(this.initiator ? 'initiator' : 'polite')
+
+        const ice_servers = (await twillioClient.tokens.create()).iceServers
+
+        this.ws.send(
+            JSON.stringify({
+                ice_servers: ice_servers,
+                initiator: this.initiator
+            })
+        );
 
         this.drainQueue()
     }

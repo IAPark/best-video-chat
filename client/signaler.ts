@@ -1,9 +1,6 @@
 import { promises } from "dns";
 
-export enum Role {
-    polite = 1,
-    initiator = 2
-}
+export interface Role {initiator: boolean, ice_servers: any}
 
 
 
@@ -31,9 +28,9 @@ export default class Signaler {
 
     onMessage(m: string) {
         if(!this.role) {
-            this.role = m == 'initiator' ? Role.initiator : Role.polite
-            
-            if(this.roleCallback) this.roleCallback(this.role)
+            this.role = JSON.parse(m)
+
+            if(this.roleCallback && this.role) this.roleCallback(this.role)
         } else if(this.signalListener) {
             this.signalListener(m)
         }
